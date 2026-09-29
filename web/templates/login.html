@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Masuk — WUWAnalyzt</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap');
+:root{ --accent:#2a41a4; --accent-h:#3a58e0; --accent-soft:#eef1ff; --positif:#16a37a; --positif-bg:#e8f8f3; --negatif:#dc2626; --negatif-bg:#fef2f2; --fw-ya:#d97706; --fw-ya-bg:#fffbeb; --fw-tdk:#0891b2; --fw-tdk-bg:#ecfeff; --bg:#f7f7f5; --srf:#fff; --srf2:#f9f9f7; --bdr:#e4e4e0; --bdr-f:var(--accent); --txt:#1a1a18; --txt2:#55554e; --txt3:#99998e; --r-sm:6px; --r-md:10px; --r-lg:16px; --r-xl:22px; --sh-xs:0 1px 3px rgba(0,0,0,.06); --sh-sm:0 2px 8px rgba(0, 0,0,.08); --sh-md:0 4px 16px rgba(0,0,0,.10); --fd:'DM Serif Display',Georgia,serif; --fb:'DM Sans',system-ui,sans-serif; }
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0} html{font-size:16px;scroll-behavior:smooth} body{font-family:var(--fb);background:var(--bg);color:var(--txt);line-height:1.6;min-height:100vh;-webkit-font-smoothing:antialiased} a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
+.nav{position:sticky;top:0;z-index:100;background:rgba(247,247,245,.93);backdrop-filter:blur(10px);border-bottom:1px solid var(--bdr);height:56px;display:flex;align-items:center;justify-content:space-between;padding:0 28px} .nav-brand{font-family:var(--fd);font-size:22px;color:var(--txt);letter-spacing:-.3px} .nav-brand span{color:var(--accent)} .nav-links{display:flex;align-items:center;gap:6px} .nav-links a{font-size:14px;font-weight:500;color:var(--txt2);padding:6px 13px;border-radius:var(--r-sm);transition:background .15s,color .15s} .nav-links a:hover{background:var(--accent-soft);color:var(--accent);text-decoration:none} .nav-links .np{background:var(--accent);color:#fff;font-weight:600} .nav-links .np:hover{background:var(--accent-h)} .nav-uname{font-size:13px;color:var(--txt2);font-weight:500} .nav-logout{font-size:13px;color:var(--txt3);background:none;border:none;cursor:pointer;padding:0} .nav-logout:hover{color:var(--negatif)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:9px 20px;border-radius:var(--r-md);font-size:14px;font-weight:600;border:none;transition:background .15s,transform .1s,box-shadow .15s;cursor:pointer;font-family:var(--fb);text-decoration:none} .btn:active{transform:translateY(1px)} .btn-primary{background:var(--accent);color:#fff;box-shadow:0 2px 8px rgba(79,110,247,.25)} .btn-primary:hover{background:var(--accent-h);box-shadow:0 4px 14px rgba(79,110,247,.3);text-decoration:none;color:#fff} .btn-secondary{background:var(--srf);color:var(--txt);border:1px solid var(--bdr)} .btn-secondary:hover{background:var(--srf2);border-color:#bbbbb0;text-decoration:none;color:var(--txt)} .btn-full{width:100%} .btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.fg{margin-bottom:16px} .lbl{display:block;margin-bottom:5px;font-size:13px;font-weight:600;color:var(--txt2)} .inp{width:100%;padding:10px 13px;background:var(--srf);border:1px solid var(--bdr);border-radius:var(--r-md);font-family:var(--fb);font-size:14px;color:var(--txt);transition:border-color .2s,box-shadow .2s;outline:none} .inp:focus{border-color:var(--bdr-f);box-shadow:0 0 0 3px rgba(79,110,247,.09)} .ferr{font-size:12px;color:var(--negatif);margin-top:4px;display:none} .ferr.show{display:block}
+.dvdr{display:flex;align-items:center;gap:12px;color:var(--txt3);font-size:13px;margin:18px 0} .dvdr::before,.dvdr::after{content:'';flex:1;height:1px;background:var(--bdr)}
+#tc{position:fixed;bottom:22px;right:22px;z-index:9999;display:flex;flex-direction:column;gap:8px} .toast{padding:11px 16px;border-radius:var(--r-md);font-size:14px;font-weight:500;background:var(--txt);color:#fff;box-shadow:var(--sh-md);animation:tIn .3s ease;max-width:300px} .toast.success{background:var(--positif)}.toast.error{background:var(--negatif)}.toast.warning{background:#b45309} @keyframes tIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}} .spin{display:inline-block;width:15px;height:15px;border:2px solid rgba(255,255,255,.35);border-top-color:#fff;border-radius:50%;animation:rot .7s linear infinite} @keyframes rot{to{transform:rotate(360deg)}} .fade{animation:fadeUp .4s ease both} @keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+/* KELAS KHUSUS LOGIN */
+body { display: flex; flex-direction: column; min-height: 100vh; }
+.login-wrapper { flex: 1; display: flex; align-items: center; justify-content: center; padding: 40px 20px; }
+.login-box { width: 100%; max-width: 420px; }
+.login-brand { text-align: center; margin-bottom: 32px; }
+.login-brand-name { font-family: var(--fd); font-size: 38px; letter-spacing: -1px; color: var(--txt); }
+.login-brand-name span { color: var(--accent); }
+.login-brand-tagline { font-size: 13px; color: var(--txt3); letter-spacing: 0.5px; margin-top: 4px; }
+.login-card { background: var(--srf); border: 1px solid var(--bdr); border-radius: var(--r-xl); padding: 36px 32px; box-shadow: var(--sh-sm); }
+.login-title { font-family: var(--fd); font-size: 22px; margin-bottom: 4px; }
+.login-subtitle { font-size: 13px; color: var(--txt2); margin-bottom: 28px; }
+.input-wrap { position: relative; } .input-wrap .inp { padding-right: 42px; }
+.pw-toggle { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--txt3); font-size: 15px; cursor: pointer; padding: 0; line-height: 1; }
+.pw-toggle:hover { color: var(--txt); }
+.forgot-link { display: block; text-align: right; font-size: 12px; margin-top: -10px; margin-bottom: 18px; color: var(--accent); }
+.login-footer { text-align: center; margin-top: 24px; font-size: 13px; color: var(--txt2); }
+</style>
+</head>
+<body>
+<nav class="nav">
+  <a class="nav-brand" href="index.html">WU<span>WA</span>nalyzt</a>
+  <div class="nav-links" id="navLinks" style="opacity: 0; transition: opacity 0.2s;"></div>
+</nav>
+
+<div class="login-wrapper">
+  <div class="login-box fade">
+    <div class="login-brand">
+      <div class="login-brand-name">WU<span>WA</span>nalyzt</div>
+      <div class="login-brand-tagline">Wuthering Waves Sentiment Analyzer</div>
+    </div>
+    <div class="login-card">
+      <h1 class="login-title">Selamat datang</h1>
+      <p class="login-subtitle">Masuk untuk mengakses fitur lengkap WUWAnalyzt</p>
+      <form id="loginForm" novalidate>
+        <div class="fg">
+          <label class="lbl" for="email">Email</label>
+          <input class="inp" type="email" id="email" placeholder="nama@email.com" autocomplete="email" required>
+          <div class="ferr" id="emailError">Email tidak valid.</div>
+        </div>
+        <div class="fg">
+          <label class="lbl" for="password">Kata Sandi</label>
+          <div class="input-wrap">
+            <input class="inp" type="password" id="password" placeholder="Minimal 6 karakter" autocomplete="current-password" required>
+            <button type="button" class="pw-toggle" id="pwToggle">👁</button>
+          </div>
+          <div class="ferr" id="passwordError">Kata sandi harus diisi.</div>
+        </div>
+        <a href="forgot-password.html" class="forgot-link" id="forgotLink">Lupa kata sandi?</a>
+        <button type="submit" class="btn btn-primary btn-full" id="loginBtn">Masuk</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div id="tc"></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script>
+const SB_URL  = 'https://kcstgzapzzwdlcilfxau.supabase.co';
+const SB_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtjc3RnemFwenp3ZGxjaWxmeGF1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYxNTc5NTEsImV4cCI6MjA5MTczMzk1MX0.oqkpZaiXgyJ4ImQ1tuTYohvXCIAzizfMAljJhhhZy-A';
+let _sb = null;
+function getSB(){ if(!_sb) _sb=supabase.createClient(SB_URL,SB_ANON); return _sb; }
+async function getUser(){ const {data:{user}}=await getSB().auth.getUser(); return user; }
+function showToast(msg,type='',dur=3000){ let tc=document.getElementById('tc'); const t=document.createElement('div');t.className='toast '+type;t.textContent=msg; tc.appendChild(t);setTimeout(()=>t.remove(),dur); }
+async function signOut(){ await getSB().auth.signOut(); window.location.href='index.html'; }
+
+(async()=>{
+  const navLinks = document.getElementById('navLinks');
+  const user = await getUser();
+  
+  if(user){
+    // JIKA SUDAH LOGIN: Langsung alihkan ke halaman yang sesuai
+    const {data:p}=await getSB().from('profiles').select('role').eq('id',user.id).single();
+    const role=p?.role||'user';
+    window.location.href = role === 'admin' ? 'admin.html' : 'dashboard.html';
+    return; // Hentikan eksekusi script selanjutnya
+  } else {
+    // JIKA BELUM LOGIN (Tamu): Tampilkan tombol masuk dan daftar
+  navLinks.innerHTML=`<a href="login.html" class="np">Masuk</a>`;
+  }
+  
+  // Munculkan navbar secara halus setelah JS selesai berpikir
+  navLinks.style.opacity = '1'; 
+})();
+
+// Toggle show/hide password
+document.getElementById('pwToggle').addEventListener('click', () => {
+  const input = document.getElementById('password');
+  const btn   = document.getElementById('pwToggle');
+  const show  = input.type === 'password';
+  input.type  = show ? 'text' : 'password';
+  btn.textContent = show ? '🙈' : '👁';
+});
+
+document.getElementById('loginForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  document.querySelectorAll('.ferr').forEach(el => el.classList.remove('show'));
+
+  const email = document.getElementById('email').value.trim();
+  const password = document.getElementById('password').value;
+  let valid = true;
+  if (!email || !/\S+@\S+\.\S+/.test(email)) { document.getElementById('emailError').classList.add('show'); valid = false; }
+  if (!password) { document.getElementById('passwordError').classList.add('show'); valid = false; }
+  if (!valid) return;
+
+  const btn = document.getElementById('loginBtn');
+  btn.disabled = true; btn.innerHTML = '<span class="spin"></span> Masuk...';
+
+  try {
+    const { data, error } = await getSB().auth.signInWithPassword({ email, password });
+    if (error) throw error;
+    const { data: profile } = await getSB().from('profiles').select('role').eq('id', data.user.id).single();
+    const role = profile?.role || 'user';
+    showToast('Berhasil masuk!', 'success');
+    setTimeout(() => { window.location.href = role === 'admin' ? 'admin.html' : 'dashboard.html'; }, 800);
+  } catch (err) {
+    showToast(err.message || 'Login gagal.', 'error');
+    btn.disabled = false; btn.textContent = 'Masuk';
+  }
+});
+</script>
+</body>
+</html>

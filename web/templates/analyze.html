@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Analisis Teks — WUWAnalyzt</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap');
+:root{ --accent:#2a41a4; --accent-h:#3a58e0; --accent-soft:#eef1ff; --positif:#16a37a; --positif-bg:#e8f8f3; --negatif:#dc2626; --negatif-bg:#fef2f2; --fw-ya:#d97706; --fw-ya-bg:#fffbeb; --fw-tdk:#0891b2; --fw-tdk-bg:#ecfeff; --bg:#f7f7f5; --srf:#fff; --srf2:#f9f9f7; --bdr:#e4e4e0; --bdr-f:var(--accent); --txt:#1a1a18; --txt2:#55554e; --txt3:#99998e; --r-sm:6px; --r-md:10px; --r-lg:16px; --r-xl:22px; --sh-xs:0 1px 3px rgba(0,0,0,.06); --sh-sm:0 2px 8px rgba(0, 0,0,.08); --sh-md:0 4px 16px rgba(0,0,0,.10); --fd:'DM Serif Display',Georgia,serif; --fb:'DM Sans',system-ui,sans-serif; }
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0} html{font-size:16px;scroll-behavior:smooth} body{font-family:var(--fb);background:var(--bg);color:var(--txt);line-height:1.6;min-height:100vh;-webkit-font-smoothing:antialiased} a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline} img{max-width:100%;display:block}
+.nav{position:sticky;top:0;z-index:100;background:rgba(247,247,245,.93);backdrop-filter:blur(10px);border-bottom:1px solid var(--bdr);height:56px;display:flex;align-items:center;justify-content:space-between;padding:0 28px} .nav-brand{font-family:var(--fd);font-size:22px;color:var(--txt);letter-spacing:-.3px} .nav-brand span{color:var(--accent)} .nav-links{display:flex;align-items:center;gap:6px} .nav-links a{font-size:14px;font-weight:500;color:var(--txt2);padding:6px 13px;border-radius:var(--r-sm);transition:background .15s,color .15s} .nav-links a:hover{background:var(--accent-soft);color:var(--accent);text-decoration:none} .nav-links .np{background:var(--accent);color:#fff;font-weight:600} .nav-uname{font-size:13px;color:var(--txt2);font-weight:500} .nav-logout{font-size:13px;color:var(--txt3);background:none;border:none;cursor:pointer;padding:0} .nav-logout:hover{color:var(--negatif)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:9px 20px;border-radius:var(--r-md);font-size:14px;font-weight:600;border:none;transition:background .15s,transform .1s,box-shadow .15s;cursor:pointer;font-family:var(--fb);text-decoration:none} .btn-primary{background:var(--accent);color:#fff;box-shadow:0 2px 8px rgba(79,110,247,.25)} .btn-primary:hover{background:var(--accent-h);box-shadow:0 4px 14px rgba(79,110,247,.3);color:#fff} .btn-secondary{background:var(--srf);color:var(--txt);border:1px solid var(--bdr)} .btn:disabled{opacity:.5;cursor:not-allowed;}
+.fg{margin-bottom:16px} .lbl{display:block;margin-bottom:5px;font-size:13px;font-weight:600;color:var(--txt2)} .txa{width:100%;padding:10px 13px;background:var(--srf);border:1px solid var(--bdr);border-radius:var(--r-md);font-family:var(--fb);font-size:14px;color:var(--txt);transition:border-color .2s;outline:none;resize:vertical;min-height:100px;} .txa:focus{border-color:var(--bdr-f);box-shadow:0 0 0 3px rgba(79,110,247,.09)}
+.card{background:var(--srf);border:1px solid var(--bdr);border-radius:var(--r-lg);box-shadow:var(--sh-xs)} .card-body{padding:24px} .bc{font-size:13px;color:var(--txt3);margin-bottom:20px} .bc a{color:var(--txt2)}.bc a:hover{color:var(--accent)} .wrap{max-width:960px;margin:0 auto;padding:36px 24px}
+#tc{position:fixed;bottom:22px;right:22px;z-index:9999;display:flex;flex-direction:column;gap:8px} .toast{padding:11px 16px;border-radius:var(--r-md);font-size:14px;font-weight:500;background:var(--txt);color:#fff;box-shadow:var(--sh-md);animation:tIn .3s ease;} @keyframes tIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}} .spin{display:inline-block;width:15px;height:15px;border:2px solid rgba(255,255,255,.35);border-top-color:#fff;border-radius:50%;animation:rot .7s linear infinite} @keyframes rot{to{transform:rotate(360deg)}} .fade{animation:fadeUp .4s ease both} @keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+/* KELAS KHUSUS ANALYZE */
+.analyze-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; align-items: start; }
+.panel-title { font-family: var(--fd); font-size: 22px; margin-bottom: 4px; }
+.panel-sub { font-size: 13px; color: var(--txt2); margin-bottom: 24px; }
+.char-row { display: flex; justify-content: space-between; align-items: center; margin-top: 5px; }.char-count { font-size: 12px; color: var(--txt3); font-variant-numeric: tabular-nums; }
+.btn-row { display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap; }
+.result-empty { background: var(--srf2); border: 1px dashed var(--bdr); border-radius: var(--r-lg); padding: 48px 28px; text-align: center; color: var(--txt3); }
+.result-empty-icon { font-size: 36px; margin-bottom: 10px; } .result-empty-text { font-size: 14px; }
+.result-card { display: none; }
+.result-pills { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+.r-pill { background: var(--srf2); border: 1px solid var(--bdr); border-radius: var(--r-lg); padding: 16px 14px; text-align: center; }
+.r-pill-label { font-size: 10px; font-weight: 700; color: var(--txt3); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 8px; display: block; }
+.r-pill-value { font-family: var(--fd); font-size: 20px; line-height: 1; }
+.r-pill-value.positif { color: var(--positif); }.r-pill-value.negatif { color: var(--negatif); }
+.analyzed-text { font-size: 13px; color: var(--txt2); background: var(--srf2); border-radius: var(--r-md); padding: 10px 14px; margin-bottom: 16px; border-left: 3px solid var(--accent); line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.detail-toggle { width: 100%; display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; background: var(--srf2); border: 1px solid var(--bdr); border-radius: var(--r-md); cursor: pointer; font-size: 13px; font-weight: 600; color: var(--txt2); transition: background 0.15s; }
+.detail-toggle:hover { background: var(--accent-soft); color: var(--accent); } .detail-chevron { transition: transform 0.25s; font-size: 12px; color: var(--txt3); } .detail-toggle.open .detail-chevron { transform: rotate(180deg); }
+.detail-content { display: none; padding: 18px 0 4px; }
+.detail-section-title { font-size: 11px; font-weight: 700; color: var(--txt3); text-transform: uppercase; margin-bottom: 12px; margin-top: 16px; } .detail-section-title:first-child { margin-top: 0; }
+.bar-row { display: flex; align-items: center; gap: 10px; margin-bottom: 9px; } .bar-label { font-size: 13px; font-weight: 500; width: 62px; flex-shrink: 0; }
+.bar-track { flex: 1; height: 7px; background: var(--bdr); border-radius: 100px; overflow: hidden; } .progress-fill { height: 100%; border-radius: 100px; transition: width 0.9s; }
+.progress-fill.positif { background: var(--positif); }.progress-fill.negatif { background: var(--negatif); }
+.bar-pct { font-size: 12px; font-weight: 700; width: 40px; text-align: right; font-variant-numeric: tabular-nums; flex-shrink: 0; }
+.separator { height: 1px; background: var(--bdr); margin: 14px 0; }
+@media (max-width: 700px) { .analyze-layout { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<nav class="nav">
+  <a class="nav-brand" href="index.html">WU<span>WA</span>nalyzt</a>
+  <div class="nav-links" id="navLinks" style="opacity: 0; transition: opacity 0.2s;"></div>
+</nav>
+
+<div class="wrap">
+  <div class="bc"><a href="dashboard.html">Dashboard</a> / Analisis Teks</div>
+  
+  <div class="analyze-layout">
+    <div class="input-panel fade">
+      <h1 class="panel-title">Analisis Teks</h1>
+      <p class="panel-sub">Masukkan satu ulasan untuk dianalisis.</p>
+      <div class="card">
+        <div class="card-body">
+          <div class="fg">
+            <label class="lbl" for="inputText">Ulasan</label>
+            <textarea class="txa" id="inputText" rows="5" maxlength="500" placeholder="Contoh: wuwa bagus tapi gacha-nya terlalu menguras dompet!"></textarea>
+            <div class="char-row">
+              <span class="char-count"><span id="charCount">0</span>/500</span>
+            </div>
+          </div>
+          <div class="btn-row">
+            <button class="btn btn-primary" id="analyzeBtn" onclick="doAnalyze()">Analisis →</button>
+            <button class="btn btn-secondary" onclick="clearAll()">Bersihkan</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="result-panel fade">
+      <h2 class="panel-title">Hasil</h2>
+      <p class="panel-sub">Hasil akan muncul di sini setelah analisis.</p>
+      
+      <div class="result-empty" id="resultEmpty">
+        <div class="result-empty-text">Belum ada analisis.<br>Masukkan teks di sebelah kiri.</div>
+      </div>
+      
+      <div class="result-card card fade" id="resultCard">
+        <div class="card-body">
+          <div class="analyzed-text" id="analyzedText"></div>
+         <div class="result-pills">
+            <div class="r-pill"><span class="r-pill-label">Sentimen</span><div class="r-pill-value" id="resSentimen">—</div></div>
+          </div>
+          <div style="margin-bottom: 20px; padding: 14px; background: var(--srf2); border: 1px solid var(--bdr); border-radius: var(--r-md);">
+            <div style="font-size: 11px; font-weight: 700; color: var(--txt3); margin-bottom: 6px; text-transform: uppercase;">🔍 Insight Topik</div>
+            <div id="teksInsight" style="font-size: 13px; color: var(--txt); font-weight: 500; line-height: 1.5;">—</div>
+          </div>
+          
+          <button class="detail-toggle" id="detailToggle" onclick="toggleDetail()">
+            <span>Lihat Detail Persentase</span><span class="detail-chevron">▾</span>
+          </button>
+          
+          <div class="detail-content" id="detailContent">
+            <div class="detail-section-title">📊 Sentimen</div>
+            <div class="bar-row"><span class="bar-label">Positif</span><div class="bar-track"><div class="progress-fill positif" id="bPositif" style="width:0%"></div></div><span class="bar-pct" style="color:var(--positif)" id="pPositif">0%</span></div>
+            <div class="bar-row"><span class="bar-label">Negatif</span><div class="bar-track"><div class="progress-fill negatif" id="bNegatif" style="width:0%"></div></div><span class="bar-pct" style="color:var(--negatif)" id="pNegatif">0%</span></div>
+            <div class="separator"></div>
+    </div>
+  </div>
+</div>
+
+<div id="tc"></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script>
+const SB_URL  = 'https://kcstgzapzzwdlcilfxau.supabase.co';
+const SB_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtjc3RnemFwenp3ZGxjaWxmeGF1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYxNTc5NTEsImV4cCI6MjA5MTczMzk1MX0.oqkpZaiXgyJ4ImQ1tuTYohvXCIAzizfMAljJhhhZy-A';
+let _sb = null; let currentUser = null;
+function getSB(){ if(!_sb) _sb=supabase.createClient(SB_URL,SB_ANON); return _sb; }
+async function getUser(){ const {data:{user}}=await getSB().auth.getUser(); return user; }
+function showToast(msg,type='',dur=3000){ let tc=document.getElementById('tc'); const t=document.createElement('div');t.className='toast '+type;t.textContent=msg; tc.appendChild(t);setTimeout(()=>t.remove(),dur); }
+async function signOut(){ await getSB().auth.signOut(); window.location.href='index.html'; }
+
+(async()=>{
+  const navLinks = document.getElementById('navLinks');
+  const {data:{user}} = await getSB().auth.getUser();
+  
+  if(!user){ window.location.href='login.html'; return; }
+  
+  currentUser = user;
+
+  const {data:p} = await getSB().from('profiles').select('role').eq('id',user.id).single();
+  const role = p?.role || 'user';
+  
+  navLinks.innerHTML=`
+    <a href="dashboard.html">Dashboard</a>
+    ${role==='admin' ? '<a href="admin.html">Admin</a>' : '<a href="history.html">Riwayat</a>'}
+    <span class="nav-uname">${user.email}</span>
+    <button class="nav-logout" onclick="signOut()">Keluar</button>
+  `;
+
+  navLinks.style.opacity = '1';
+})();
+
+const ta = document.getElementById('inputText');
+ta.addEventListener('input', () => { document.getElementById('charCount').textContent = ta.value.length; });
+ta.addEventListener('keydown', e => { if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) doAnalyze(); });
+
+function clearAll() {
+  ta.value = ''; document.getElementById('charCount').textContent = '0';
+  document.getElementById('resultEmpty').style.display = 'block';
+  document.getElementById('resultCard').style.display = 'none';
+  if (detailOpen) toggleDetail();
+}
+
+// FUNGSI DOANALYZE
+async function doAnalyze() {
+  const text = ta.value.trim();
+  if (!text) { showToast('Masukkan teks ulasan terlebih dahulu.', 'warning'); return; }
+  const btn = document.getElementById('analyzeBtn');
+  btn.disabled = true; btn.innerHTML = '<span class="spin"></span> Menganalisis...';
+
+  try {
+    const fd = new FormData(); fd.append('text', text);
+    
+    // FETCH
+    const res  = await fetch('http://127.0.0.1:5000/predict', { method: 'POST', body: fd });
+    const data = await res.json();
+    
+    renderResult(text, data);
+
+    // Simpan ke history jika login
+    if (currentUser) {
+      const { error: errHist } = await getSB().from('histories').insert({
+        user_id:     currentUser.id,
+        input_type:  'text',
+        input_value: text,
+        sentimen:    data.sentimen,
+      });
+      if (errHist) {
+        console.error('Supabase insert error:', errHist);
+        showToast('Hasil analisis tampil, tapi riwayat gagal disimpan.', 'warning');
+      }
+    }
+
+  } catch (err) {
+    showToast('Terjadi kesalahan pada server AI.', 'error');
+    console.error('Error:', err);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Analisis →';
+  }
+}
+
+function renderResult(text, data) {
+  if (detailOpen) { detailOpen = false; applyDetailState(); }
+  document.getElementById('resultEmpty').style.display = 'none';
+  const card = document.getElementById('resultCard'); card.style.display = 'block';
+  
+  document.getElementById('analyzedText').textContent = text.length > 120 ? text.slice(0, 117) + '...' : text;
+  
+  const sCls = { Positif: 'positif', Negatif: 'negatif' }[data.sentimen];
+  const valS = document.getElementById('resSentimen'); valS.textContent = data.sentimen; valS.className = 'r-pill-value ' + sCls;
+
+  const insight = generateInsight(text, data.sentimen);
+  document.getElementById('teksInsight').textContent = insight;
+  
+  setTimeout(() => {
+    setBar('bPositif', 'pPositif', data.detail_sentimen.Positif);
+    setBar('bNegatif', 'pNegatif', data.detail_sentimen.Negatif);
+  }, 60);
+}
+
+function setBar(barId, pctId, val) {
+  document.getElementById(barId).style.width = val + '%';
+  document.getElementById(pctId).textContent = val + '%';
+}
+
+let detailOpen = false;
+function toggleDetail() { detailOpen = !detailOpen; applyDetailState(); }
+function applyDetailState() {
+  document.getElementById('detailContent').style.display = detailOpen ? 'block' : 'none';
+  const toggle = document.getElementById('detailToggle'); toggle.classList.toggle('open', detailOpen);
+  toggle.querySelector('span').textContent = detailOpen ? 'Sembunyikan Detail' : 'Lihat Detail Persentase';
+}
+
+// --- FUNGSI EKSTRAKSI INSIGHT ---
+function generateInsight(teks, sentimen) {
+    if (!teks) return "-";
+    const teksLower = teks.toLowerCase();
+    let insight = "-";
+
+    if (sentimen === "Negatif") {
+        if (teksLower.match(/(lag|ping|server|patah|berat|fps|panas|bug|hp|keluar sendiri)/)) {
+            insight = "🛠️ Kendala Teknis: Pemain mengeluhkan performa perangkat, bug, atau konektivitas server.";
+        } else if (teksLower.match(/(gacha|pity|ampas|rate off|kalah|bintang 5|susah|mahal)/)) {
+            insight = "🎲 Sistem Gacha: Pemain merasa frustrasi dengan sistem gacha atau sulit mendapatkan karakter.";
+        } else if (teksLower.match(/(bosen|membosankan|sepi|event|konten)/)) {
+            insight = "📉 Konten Game: Pemain merasa permainan mulai membosankan atau kekurangan event baru.";
+        } else {
+            insight = "⚠️ Ketidakpuasan Umum: Pemain memberikan ulasan negatif tanpa menyebutkan aspek spesifik.";
+        }
+    } 
+    else if (sentimen === "Positif") {
+        if (teksLower.match(/(grafik|visual|pemandangan|animasi|mulus|desain|cantik)/)) {
+            insight = "✨ Kualitas Visual: Pemain mengapresiasi grafik dan estetika lingkungan game.";
+        } else if (teksLower.match(/(kuro|dev|hadiah|kompensasi|gratis|terima kasih)/)) {
+            insight = "🎁 Apresiasi Developer: Pemain senang dengan kompensasi, hadiah, atau respon dari developer.";
+        } else if (teksLower.match(/(story|cerita|karakter|gameplay|seru|bagus|keren|mekanik|combat)/)) {
+            insight = "⚔️ Gameplay & Cerita: Pemain menikmati inti permainan, mekanik pertarungan, atau alur cerita.";
+        } else {
+            insight = "⭐ Kepuasan Umum: Pemain menikmati game secara keseluruhan.";
+        }
+    }
+    return insight;
+}
+
+</script>
+</body>
+</html>

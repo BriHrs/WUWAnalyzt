@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Riwayat — WUWAnalyzt</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap');
+:root{ --accent:#2a41a4; --accent-h:#3a58e0; --accent-soft:#eef1ff; --positif:#16a37a; --positif-bg:#e8f8f3; --negatif:#dc2626; --negatif-bg:#fef2f2; --bg:#f7f7f5; --srf:#fff; --srf2:#f9f9f7; --bdr:#e4e4e0; --bdr-f:var(--accent); --txt:#1a1a18; --txt2:#55554e; --txt3:#99998e; --r-sm:6px; --r-md:10px; --r-lg:16px; --r-xl:22px; --sh-xs:0 1px 3px rgba(0,0,0,.06); --sh-sm:0 2px 8px rgba(0, 0,0,.08); --sh-md:0 4px 16px rgba(0,0,0,.10); --fd:'DM Serif Display',Georgia,serif; --fb:'Lagu Sans','DM Sans',system-ui,sans-serif; }
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0} html{font-size:16px;scroll-behavior:smooth} body{font-family:var(--fb);background:var(--bg);color:var(--txt);line-height:1.6;min-height:100vh;-webkit-font-smoothing:antialiased} a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline} img{max-width:100%;display:block}
+.nav{position:sticky;top:0;z-index:100;background:rgba(247,247,245,.93);backdrop-filter:blur(10px);border-bottom:1px solid var(--bdr);height:56px;display:flex;align-items:center;justify-content:space-between;padding:0 28px} .nav-brand{font-family:var(--fd);font-size:22px;color:var(--txt);letter-spacing:-.3px} .nav-brand span{color:var(--accent)} .nav-links{display:flex;align-items:center;gap:6px} .nav-links a{font-size:14px;font-weight:500;color:var(--txt2);padding:6px 13px;border-radius:var(--r-sm);transition:background .15s,color .15s} .nav-links a:hover{background:var(--accent-soft);color:var(--accent);text-decoration:none} .nav-links .np{background:var(--accent);color:#fff;font-weight:600} .nav-uname{font-size:13px;color:var(--txt2);font-weight:500} .nav-logout{font-size:13px;color:var(--txt3);background:none;border:none;cursor:pointer;padding:0} .nav-logout:hover{color:var(--negatif)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:9px 20px;border-radius:var(--r-md);font-size:14px;font-weight:600;border:none;transition:background .15s,transform .1s,box-shadow .15s;cursor:pointer;font-family:var(--fb);text-decoration:none} .btn-primary{background:var(--accent);color:#fff;box-shadow:0 2px 8px rgba(79,110,247,.25)} .btn-primary:hover{background:var(--accent-h);box-shadow:0 4px 14px rgba(79,110,247,.3);color:#fff} .btn-secondary{background:var(--srf);color:var(--txt);border:1px solid var(--bdr)} .btn:disabled{opacity:.5;cursor:not-allowed;} .btn-sm{padding:6px 13px;font-size:13px;border-radius:var(--r-sm)}
+.card{background:var(--srf);border:1px solid var(--bdr);border-radius:var(--r-lg);box-shadow:var(--sh-xs)} .card-body{padding:24px} .bc{font-size:13px;color:var(--txt3);margin-bottom:20px} .bc a{color:var(--txt2)}.bc a:hover{color:var(--accent)} .wrap{max-width:960px;margin:0 auto;padding:36px 24px}
+.badge{display:inline-block;padding:3px 10px;border-radius:100px;font-size:12px;font-weight:600} .badge-positif{background:var(--positif-bg);color:var(--positif)}.badge-negatif{background:var(--negatif-bg);color:var(--negatif)}
+#tc{position:fixed;bottom:22px;right:22px;z-index:9999;display:flex;flex-direction:column;gap:8px} .toast{padding:11px 16px;border-radius:var(--r-md);font-size:14px;font-weight:500;background:var(--txt);color:#fff;box-shadow:var(--sh-md);animation:tIn .3s ease;} @keyframes tIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}} .spin{display:inline-block;width:15px;height:15px;border:2px solid rgba(255,255,255,.35);border-top-color:#fff;border-radius:50%;animation:rot .7s linear infinite} @keyframes rot{to{transform:rotate(360deg)}} .fade{animation:fadeUp .4s ease both} @keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+/* KELAS KHUSUS HISTORY */
+.page-header { margin-bottom: 28px; } .page-header h1 { font-family: var(--fd); font-size: 28px; margin-bottom: 4px; } .page-header p { font-size: 14px; color: var(--txt2); }
+.filter-bar { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; } .filter-bar select, .filter-bar input { padding: 7px 12px; border: 1px solid var(--bdr); border-radius: var(--r-md); font-size: 13px; background: var(--srf); color: var(--txt); outline: none; } .filter-bar select:focus, .filter-bar input:focus { border-color: var(--accent); } .filter-bar input { min-width: 200px; }
+.mini-stats { display: flex; gap: 12px; margin-bottom: 24px; flex-wrap: wrap; } .mini-stat { background: var(--srf); border: 1px solid var(--bdr); border-radius: var(--r-md); padding: 12px 18px; display: flex; align-items: center; gap: 10px; } .mini-stat-val { font-family: var(--fd); font-size: 22px; } .mini-stat-label { font-size: 12px; color: var(--txt3); }
+.history-list { display: flex; flex-direction: column; gap: 12px; } .history-item { background: var(--srf); border: 1px solid var(--bdr); border-radius: var(--r-lg); padding: 16px 20px; transition: box-shadow 0.15s; } .history-item:hover { box-shadow: var(--sh-sm); } .history-item-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 8px; } .history-text { font-size: 14px; color: var(--txt); line-height: 1.5; flex: 1; display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; } .history-badges { display: flex; gap: 6px; flex-shrink: 0; flex-wrap: wrap; justify-content: flex-end; align-items: center; } .history-meta { font-size: 12px; color: var(--txt3); display: flex; align-items: center; gap: 12px; } .history-type-chip { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; background: var(--srf2); border: 1px solid var(--bdr); color: var(--txt3); }
+.empty-state { text-align: center; padding: 60px 24px; color: var(--txt3); } .empty-state-icon { font-size: 48px; margin-bottom: 14px; } .empty-state h3 { font-size: 18px; color: var(--txt2); margin-bottom: 6px; } .empty-state p { font-size: 14px; }
+.pagination { display: flex; align-items: center; justify-content: center; gap: 6px; margin-top: 28px; } .page-btn { padding: 6px 12px; border-radius: var(--r-sm); border: 1px solid var(--bdr); background: var(--srf); font-size: 13px; cursor: pointer; color: var(--txt2); transition: all 0.15s; } .page-btn:hover, .page-btn.active { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); } .page-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.guest-locked { max-width: 480px; margin: 80px auto; text-align: center; } .guest-locked-icon { font-size: 48px; margin-bottom: 16px; } .guest-locked h2 { font-family: var(--fd); font-size: 24px; margin-bottom: 8px; } .guest-locked p { font-size: 14px; color: var(--txt2); margin-bottom: 24px; }
+
+/* KELAS KHUSUS HAPUS RIWAYAT & MODAL */
+.btn-delete { background: var(--srf2); border: 1px solid var(--bdr); color: var(--txt3); cursor: pointer; padding: 4px 8px; border-radius: var(--r-sm); transition: all 0.15s; font-size: 14px; margin-left: 6px; }
+.btn-delete:hover { color: var(--negatif); background: var(--negatif-bg); border-color: #fca5a5; }
+.modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.4); backdrop-filter: blur(2px); display: none; align-items: center; justify-content: center; z-index: 1000; }
+.modal-overlay.show { display: flex; animation: tIn 0.2s ease; }
+.modal-box { background: var(--srf); border-radius: var(--r-lg); padding: 24px; width: 100%; max-width: 360px; box-shadow: var(--sh-md); text-align: center; }
+.modal-icon { font-size: 36px; margin-bottom: 12px; }
+.modal-title { font-family: var(--fd); font-size: 22px; margin-bottom: 8px; }
+.modal-desc { font-size: 14px; color: var(--txt2); margin-bottom: 24px; line-height: 1.5; }
+.modal-actions { display: flex; gap: 10px; justify-content: center; }
+</style>
+</head>
+<body>
+<nav class="nav">
+  <a class="nav-brand" href="index.html">WUW<span>Analyzt</span></a>
+  <div class="nav-links" id="navLinks" style="opacity: 0; transition: opacity 0.2s;"></div>
+</nav>
+
+<div class="wrap">
+  <div class="bc"><a href="dashboard.html">Dashboard</a> / Riwayat</div>
+
+  <div id="guestBlock" style="display:none;">
+    <div class="guest-locked fade">
+      <div class="guest-locked-icon">📋</div>
+      <h2>Riwayat butuh akun</h2>
+      <p>Buat akun gratis untuk menyimpan dan melihat riwayat semua analisis yang pernah kamu lakukan.</p>
+      <div style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap;">
+        <a href="register.html" class="btn btn-primary">Buat Akun Gratis</a>
+        <a href="login.html" class="btn btn-secondary">Masuk</a>
+      </div>
+    </div>
+  </div>
+
+  <div id="mainContent" style="display:none;">
+    <div class="page-header fade">
+      <h1>Riwayat Analisis</h1>
+      <p>Semua analisis yang pernah kamu lakukan tercatat di sini.</p>
+    </div>
+
+    <div class="mini-stats fade" id="miniStats"></div>
+
+    <div class="filter-bar fade">
+      <input type="text" id="searchInput" placeholder="Cari teks ulasan..." oninput="filterHistory()">
+      <select id="filterSentimen" onchange="filterHistory()">
+        <option value="">Semua Sentimen</option>
+        <option value="Positif">Positif</option>
+        <option value="Negatif">Negatif</option>
+      </select>
+      </div>
+
+    <div class="history-list fade" id="historyList"></div>
+    <div class="pagination fade" id="pagination"></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="deleteModal">
+  <div class="modal-box">
+    <div class="modal-icon">🗑️</div>
+    <h3 class="modal-title">Hapus Riwayat?</h3>
+    <p class="modal-desc">Data riwayat ini akan dihapus secara permanen dan tidak dapat dikembalikan. Lanjutkan?</p>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="closeDeleteModal()">Batal</button>
+      <button class="btn btn-primary" style="background:var(--negatif)" id="confirmDeleteBtn" onclick="executeDelete()">Ya, Hapus</button>
+    </div>
+  </div>
+</div>
+
+<div id="tc"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script>
+const SB_URL  = 'https://kcstgzapzzwdlcilfxau.supabase.co';
+const SB_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtjc3RnemFwenp3ZGxjaWxmeGF1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYxNTc5NTEsImV4cCI6MjA5MTczMzk1MX0.oqkpZaiXgyJ4ImQ1tuTYohvXCIAzizfMAljJhhhZy-A';
+let _sb = null; let currentUser = null;
+function getSB(){ if(!_sb) _sb=supabase.createClient(SB_URL,SB_ANON); return _sb; }
+async function getUser(){ const {data:{user}}=await getSB().auth.getUser(); return user; }
+function showToast(msg,type='',dur=3000){ let tc=document.getElementById('tc'); const t=document.createElement('div');t.className='toast '+type;t.textContent=msg; tc.appendChild(t);setTimeout(()=>t.remove(),dur); }
+async function signOut(){ await getSB().auth.signOut(); window.location.href='index.html'; }
+
+const PAGE_SIZE = 10;
+let allHistories = []; let filtered = []; let currentPage = 1;
+let itemToDelete = null;
+
+(async()=>{
+  const navLinks = document.getElementById('navLinks');
+  const {data:{user}} = await getSB().auth.getUser();
+  
+  // Jika belum login, tendang ke halaman login
+  if(!user){ window.location.href='login.html'; return; }
+  
+  currentUser = user;
+  
+  // 1. Tampilkan area konten riwayat ke layar
+  document.getElementById('mainContent').style.display = 'block';
+  
+  // 2. Tarik data riwayat dari database Supabase
+  loadHistory(user.id);
+  
+  // 3. Render Navbar seperti di halaman lain
+  const {data:p} = await getSB().from('profiles').select('role').eq('id',user.id).single();
+  const role = p?.role || 'user';
+  
+  navLinks.innerHTML=`
+    <a href="dashboard.html">Dashboard</a>
+    ${role==='admin' ? '<a href="admin.html">Admin</a>' : '<a href="history.html">Riwayat</a>'}
+    <span class="nav-uname">${user.email}</span>
+    <button class="nav-logout" onclick="signOut()">Keluar</button>
+  `;
+
+  navLinks.style.opacity = '1';
+})();
+async function loadHistory(userId) {
+  const { data, error } = await getSB().from('histories').select('*').eq('user_id', userId).order('created_at', { ascending: false });
+  if (error) { showToast('Gagal memuat riwayat.', 'error'); return; }
+  allHistories = data || [];
+  renderMiniStats(); filterHistory();
+}
+
+function renderMiniStats() {
+  const total = allHistories.length;
+  const positif = allHistories.filter(h => h.sentimen === 'Positif').length;
+  const negatif = allHistories.filter(h => h.sentimen === 'Negatif').length;
+
+  document.getElementById('miniStats').innerHTML = `
+    <div class="mini-stat"><div><div class="mini-stat-val">${total}</div><div class="mini-stat-label">Total Analisis</div></div></div>
+    <div class="mini-stat"><div><div class="mini-stat-val" style="color:var(--positif)">${positif}</div><div class="mini-stat-label">Sentimen Positif</div></div></div>
+    <div class="mini-stat"><div><div class="mini-stat-val" style="color:var(--negatif)">${negatif}</div><div class="mini-stat-label">Sentimen Negatif</div></div></div>
+  `;
+}
+
+function filterHistory() {
+  const search = document.getElementById('searchInput').value.toLowerCase();
+  const sentimen = document.getElementById('filterSentimen').value;
+
+  filtered = allHistories.filter(h => {
+    const matchSearch = !search || h.input_value.toLowerCase().includes(search);
+    const matchSentimen = !sentimen || h.sentimen === sentimen;
+    return matchSearch && matchSentimen;
+  });
+
+  currentPage = 1; renderPage();
+}
+
+function renderPage() {
+  const list = document.getElementById('historyList');
+  const start = (currentPage - 1) * PAGE_SIZE;
+  const items = filtered.slice(start, start + PAGE_SIZE);
+
+  if (filtered.length === 0) {
+    list.innerHTML = `<div class="empty-state"><div class="empty-state-icon">🔍</div><h3>Tidak ada riwayat</h3><p>Coba ubah filter atau mulai analisis baru.</p></div>`;
+    document.getElementById('pagination').innerHTML = ''; return;
+  }
+
+  list.innerHTML = items.map(h => {
+    // Mengecek apakah tipe datanya adalah CSV
+    const isCsv = h.input_type === 'csv';
+    
+    // Logika Warna Badge
+    let sentClass = '';
+    if (h.sentimen === 'Positif') sentClass = 'badge-positif';
+    else if (h.sentimen === 'Negatif') sentClass = 'badge-negatif';
+    
+    // Jika tipe data adalah CSV, kita buat desain badge khusus warna biru
+    const badgeHtml = isCsv 
+        ? `<span class="badge" style="background:#eef1ff; color:#4f6ef7; border: 1px solid #4f6ef7;">📊 ${h.sentimen}</span>`
+        : `<span class="badge ${sentClass}">${h.sentimen}</span>`;
+
+    const icon = isCsv ? '📁 ' : '';
+    const typeLabel = isCsv ? 'File CSV' : 'Teks Tunggal';
+
+    return `
+      <div class="history-item">
+        <div class="history-item-top">
+          <div class="history-text" style="font-weight: ${isCsv ? '600' : 'normal'}">${icon}${h.input_value.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>
+          <div class="history-badges">
+            ${badgeHtml}
+            <button class="btn-delete" title="Hapus Riwayat" onclick="openDeleteModal('${h.id}')">🗑️</button>
+          </div>
+        </div>
+        <div class="history-meta">
+          <span class="history-type-chip">${typeLabel}</span>
+          <span>${new Date(h.created_at).toLocaleDateString('id-ID', {day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit'})}</span>
+        </div>
+      </div>
+    `;
+  }).join('');
+  renderPagination();
+}
+
+function renderPagination() {
+  const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
+  if (totalPages <= 1) { document.getElementById('pagination').innerHTML = ''; return; }
+  let html = `<button class="page-btn" onclick="goPage(${currentPage-1})" ${currentPage===1?'disabled':''}>‹ Prev</button>`;
+  for (let i = 1; i <= totalPages; i++) { html += `<button class="page-btn ${i===currentPage?'active':''}" onclick="goPage(${i})">${i}</button>`; }
+  html += `<button class="page-btn" onclick="goPage(${currentPage+1})" ${currentPage===totalPages?'disabled':''}>Next ›</button>`;
+  document.getElementById('pagination').innerHTML = html;
+}
+
+function goPage(p) {
+  const total = Math.ceil(filtered.length / PAGE_SIZE);
+  if (p < 1 || p > total) return;
+  currentPage = p; renderPage(); window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// --- FUNGSI HAPUS RIWAYAT ---
+function openDeleteModal(id) {
+  itemToDelete = id;
+  document.getElementById('deleteModal').classList.add('show');
+}
+
+function closeDeleteModal() {
+  itemToDelete = null;
+  document.getElementById('deleteModal').classList.remove('show');
+}
+
+async function executeDelete() {
+  if (!itemToDelete) return;
+  const btn = document.getElementById('confirmDeleteBtn');
+  btn.disabled = true; btn.innerHTML = '<span class="spin"></span>';
+
+  try {
+    const { error } = await getSB().from('histories').delete().eq('id', itemToDelete);
+    if (error) throw error;
+    
+    showToast('Riwayat berhasil dihapus.', 'success');
+    
+    // Hapus data dari array lokal agar tidak perlu mengambil ulang (fetch) seluruh data dari Supabase
+    allHistories = allHistories.filter(h => String(h.id) !== String(itemToDelete));
+    
+    // Render ulang tampilan
+    filterHistory(); 
+    renderMiniStats();
+  } catch (err) {
+    showToast('Gagal menghapus riwayat.', 'error');
+    console.error(err);
+  } finally {
+    closeDeleteModal();
+    btn.disabled = false; btn.textContent = 'Ya, Hapus';
+  }
+}
+</script>
+</body>
+</html>

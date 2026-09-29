@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Analisis Massal — WUWAnalyzt</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap');
+:root{
+  --accent:#2a41a4; --accent-h:#3a58e0; --accent-soft:#eef1ff;
+  --positif:#16a37a; --positif-bg:#e8f8f3;
+  --negatif:#dc2626; --negatif-bg:#fef2f2;
+  --bg:#f7f7f5; --srf:#fff; --srf2:#f9f9f7;
+  --bdr:#e4e4e0;
+  --txt:#1a1a18; --txt2:#55554e; --txt3:#99998e;
+  --r-sm:6px; --r-md:10px; --r-lg:16px;
+  --sh-xs:0 1px 3px rgba(0,0,0,.06);
+  --fd:'DM Serif Display',Georgia,serif;
+  --fb:'DM Sans',system-ui,sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:16px;scroll-behavior:smooth}
+body{font-family:var(--fb);background:var(--bg);color:var(--txt);line-height:1.6;min-height:100vh;}
+a{color:var(--accent);text-decoration:none} a:hover{text-decoration:underline}
+
+.nav{position:sticky;top:0;z-index:100;background:rgba(247,247,245,.93);backdrop-filter:blur(10px);border-bottom:1px solid var(--bdr);height:56px;display:flex;align-items:center;justify-content:space-between;padding:0 28px}
+.nav-brand{font-family:var(--fd);font-size:22px;color:var(--txt);letter-spacing:-.3px}
+.nav-brand span{color:var(--accent)}
+.nav-links{display:flex;align-items:center;gap:6px}
+.nav-links a{font-size:14px;font-weight:500;color:var(--txt2);padding:6px 13px;border-radius:var(--r-sm);transition:background .15s}
+.nav-links a:hover{background:var(--accent-soft);color:var(--accent);text-decoration:none}
+.nav-uname{font-size:13px;color:var(--txt2);font-weight:500}
+.nav-logout{font-size:13px;color:var(--txt3);background:none;border:none;cursor:pointer;padding:0}
+.nav-logout:hover{color:var(--negatif)}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:9px 20px;border-radius:var(--r-md);font-size:14px;font-weight:600;border:none;transition:all .15s;cursor:pointer;font-family:var(--fb);}
+.btn-primary{background:var(--accent);color:#fff;box-shadow:0 2px 8px rgba(79,110,247,.25)}
+.btn-primary:hover:not(:disabled){background:var(--accent-h);transform:translateY(-1px)}
+.btn:disabled{opacity:.6;cursor:not-allowed}
+
+.card{background:var(--srf);border:1px solid var(--bdr);border-radius:var(--r-lg);box-shadow:var(--sh-xs)}
+.card-body{padding:24px}
+
+.wrap{max-width:800px;margin:0 auto;padding:36px 24px}
+.bc{font-size:13px;color:var(--txt3);margin-bottom:20px}
+.bc a{color:var(--txt2)}
+.page-header h1{font-family:var(--fd);font-size:28px;margin-bottom:6px;}
+.page-header p{font-size:14px;color:var(--txt2);margin-bottom:24px;}
+
+#tc{position:fixed;bottom:22px;right:22px;z-index:9999;display:flex;flex-direction:column;gap:8px}
+.toast{padding:11px 16px;border-radius:var(--r-md);font-size:14px;font-weight:500;background:var(--txt);color:#fff;animation:tIn .3s ease;}
+.toast.success{background:var(--positif)}
+.toast.error{background:var(--negatif)}
+@keyframes tIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.fade{animation:fadeUp .4s ease both}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+/* FILE INPUT */
+.file-input-row{display:flex;align-items:center;gap:12px;padding:14px 16px;border:1px solid var(--bdr);border-radius:var(--r-md);background:var(--srf2);margin-bottom:16px;}
+.file-input-row input[type=file]{flex:1;font-size:13px;color:var(--txt2);background:none;border:none;outline:none;cursor:pointer;}
+.file-input-row input[type=file]::file-selector-button{font-family:var(--fb);font-size:12px;font-weight:600;background:var(--accent-soft);color:var(--accent);border:none;padding:5px 12px;border-radius:var(--r-sm);cursor:pointer;margin-right:10px;}
+.file-input-row input[type=file]::file-selector-button:hover{background:var(--accent);color:#fff;}
+
+/* PROGRESS */
+.progress-wrap{margin-top:20px;display:none;}
+.progress-text{font-size:13px;font-weight:600;color:var(--txt2);margin-bottom:8px;display:flex;justify-content:space-between;}
+.progress-bg{width:100%;height:10px;background:var(--bdr);border-radius:10px;overflow:hidden;}
+.progress-fill{height:100%;background:var(--accent);width:0%;transition:width 0.4s ease;border-radius:10px;}
+
+/* HASIL */
+.hasil-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px;}
+.stat-item{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--bdr);}
+.stat-item:last-of-type{border-bottom:none;}
+.stat-label{font-size:14px;color:var(--txt2);}
+.stat-value{font-size:15px;font-weight:600;}
+
+/* PREVIEW HASIL */
+.preview-label{font-size:12px;font-weight:600;color:var(--txt3);text-transform:uppercase;letter-spacing:.06em;margin:20px 0 10px;}
+.preview-table-wrap{border:1px solid var(--bdr);border-radius:var(--r-md);overflow:hidden;}
+.preview-table-scroll{overflow-x:auto;max-height:260px;overflow-y:auto;}
+table{width:100%;border-collapse:collapse;font-size:13px;}
+thead th{padding:9px 14px;text-align:left;font-size:12px;font-weight:600;color:var(--txt2);background:var(--srf2);border-bottom:1px solid var(--bdr);white-space:nowrap;position:sticky;top:0;}
+tbody tr{border-bottom:1px solid var(--bdr);}
+tbody tr:last-child{border-bottom:none;}
+tbody tr:hover{background:var(--srf2);}
+tbody td{padding:8px 14px;white-space:nowrap;max-width:220px;overflow:hidden;text-overflow:ellipsis;}
+td.idx{color:var(--txt3);font-size:12px;width:36px;text-align:center;}
+.badge-pos{display:inline-block;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:600;background:var(--positif-bg);color:var(--positif);}
+.badge-neg{display:inline-block;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:600;background:var(--negatif-bg);color:var(--negatif);}
+.badge-netral{display:inline-block;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:600;background:#f5f0e8;color:#92773a;}
+.preview-info{font-size:12px;color:var(--txt3);padding:8px 14px;border-top:1px solid var(--bdr);background:var(--srf2);}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <a class="nav-brand" href="index.html">WUW<span>Analyzt</span></a>
+  <div class="nav-links">
+    <a href="dashboard.html">Dashboard</a>
+    <a href="history.html">Riwayat</a>
+    <span class="nav-uname" id="navEmail"></span>
+    <button class="nav-logout" onclick="signOut()">Keluar</button>
+  </div>
+</nav>
+
+<div class="wrap fade">
+  <div class="bc"><a href="dashboard.html">Dashboard</a> / Analisis Massal</div>
+  <div class="page-header">
+    <h1>Analisis Massal (CSV)</h1>
+    <p>Unggah file ulasan berformat CSV. Sistem akan melabeli setiap baris dan menyimpannya ke riwayatmu.</p>
+  </div>
+
+  <!-- CARD UPLOAD -->
+  <div class="card" style="margin-bottom:24px;">
+    <div class="card-body">
+      <div class="file-input-row">
+        <input type="file" id="csvFile" accept=".csv">
+      </div>
+      <button class="btn btn-primary" id="btnProses" onclick="uploadCSV()" style="width:100%;">Jalankan Prediksi Massal →</button>
+
+      <div class="progress-wrap" id="progWrap">
+        <div class="progress-text"><span id="progLabel">Menyiapkan model...</span><span id="progPercent">0%</span></div>
+        <div class="progress-bg"><div class="progress-fill" id="progFill"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HASIL (muncul setelah analisis) -->
+  <div id="csvResults" style="display:none;" class="fade">
+
+    <!-- Ringkasan + Chart -->
+    <div class="hasil-grid">
+      <div class="card">
+        <div class="card-body">
+          <h3 style="font-family:var(--fd);font-size:18px;margin-bottom:16px;">Ringkasan Hasil</h3>
+          <div class="stat-item">
+            <span class="stat-label">Total Baris</span>
+            <span class="stat-value" id="res-total">0</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Positif</span>
+            <span class="stat-value" id="res-pos" style="color:var(--positif);">0%</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Negatif</span>
+            <span class="stat-value" id="res-neg" style="color:var(--negatif);">0%</span>
+          </div>
+          <button class="btn btn-primary" id="btnDownload" style="background:var(--positif);width:100%;margin-top:20px;">Unduh Hasil CSV ⬇</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-body" style="display:flex;align-items:center;justify-content:center;">
+          <canvas id="barChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Preview Baris Hasil -->
+    <p class="preview-label">Preview Hasil Analisis</p>
+    <div class="preview-table-wrap">
+      <div class="preview-table-scroll">
+        <table>
+          <thead id="prevThead"></thead>
+          <tbody id="prevTbody"></tbody>
+        </table>
+      </div>
+      <div class="preview-info" id="prevInfo"></div>
+    </div>
+
+  </div>
+</div>
+
+<div id="tc"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script>
+const SB_URL  = 'https://kcstgzapzzwdlcilfxau.supabase.co';
+const SB_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtjc3RnemFwenp3ZGxjaWxmeGF1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYxNTc5NTEsImV4cCI6MjA5MTczMzk1MX0.oqkpZaiXgyJ4ImQ1tuTYohvXCIAzizfMAljJhhhZy-A';
+let _sb = null; let currentUser = null;
+function getSB(){ if(!_sb) _sb=supabase.createClient(SB_URL,SB_ANON); return _sb; }
+function showToast(msg,type='',dur=4000){ const tc=document.getElementById('tc'); const t=document.createElement('div'); t.className='toast '+type; t.textContent=msg; tc.appendChild(t); setTimeout(()=>t.remove(),dur); }
+async function signOut(){ await getSB().auth.signOut(); window.location.href='index.html'; }
+
+(async()=>{
+  const {data:{user}} = await getSB().auth.getUser();
+  
+  if(!user){ window.location.href='login.html'; return; }
+  
+  currentUser = user;
+  document.getElementById('navEmail').textContent = user.email;
+})();
+
+let selectedFile = null;
+let generatedCsvUrl = null;
+let chartInstance = null;
+
+document.getElementById('csvFile').addEventListener('change', e => { selectedFile = e.target.files[0]; });
+
+
+function renderResultPreview(csvText) {
+  const lines = csvText.trim().split(/\r?\n/).filter(l => l.trim());
+  if (lines.length < 2) return;
+
+  const sep = lines[0].includes(';') ? ';' : ',';
+
+
+  function parseCSVLine(text, separator) {
+    let result = [], col = '', inQuote = false;
+    for (let i = 0; i < text.length; i++) {
+      let c = text[i];
+      if (c === '"' && text[i + 1] === '"') { col += '"'; i++; }
+      else if (c === '"') { inQuote = !inQuote; }
+      else if (c === separator && !inQuote) { result.push(col); col = ''; }
+      else { col += c; }
+    }
+    result.push(col);
+  
+    return result.map(s => s.replace(/^"|"$/g, '').trim());
+  }
+
+
+  const headers = parseCSVLine(lines[0], sep);
+  const rows = lines.slice(1).map(l => parseCSVLine(l, sep));
+  
+  const total = rows.length;
+  const preview = rows.slice(0, 10);
+
+  /* Thead */
+  const thead = document.getElementById('prevThead');
+  thead.innerHTML = '';
+  const htr = document.createElement('tr');
+  const thIdx = document.createElement('th'); thIdx.textContent = '#'; htr.appendChild(thIdx);
+  headers.forEach(h => { const th = document.createElement('th'); th.textContent = h; htr.appendChild(th); });
+  thead.appendChild(htr);
+
+  /* Cari index kolom sentimen */
+  const SENTIMEN_KEYWORDS = ['prediksi_sentimen', 'sentimen', 'label', 'prediksi', 'sentiment'];
+  const sentimenIdx = headers.findIndex(h => {
+    const hl = h.toLowerCase().trim();
+    return SENTIMEN_KEYWORDS.some(k => hl === k || hl.endsWith('_' + k) || hl.startsWith(k + '_'));
+  });
+
+  /* Nilai yang dianggap valid sebagai label sentimen */
+  const VALID_SENTIMEN = ['positif', 'negatif', 'positive', 'negative', 'netral', 'neutral'];
+
+  /* Tbody */
+  const tbody = document.getElementById('prevTbody');
+  tbody.innerHTML = '';
+  preview.forEach((row, i) => {
+    const tr = document.createElement('tr');
+    const tdIdx = document.createElement('td'); tdIdx.className = 'idx'; tdIdx.textContent = i + 1; tr.appendChild(tdIdx);
+    
+    headers.forEach((_, j) => {
+      const td = document.createElement('td');
+      const val = row[j] !== undefined ? row[j] : '—';
+      const valLow = val.toLowerCase().trim();
+      
+
+      if (j === sentimenIdx && VALID_SENTIMEN.includes(valLow)) {
+        const badge = document.createElement('span');
+        const isPos = valLow === 'positif' || valLow === 'positive';
+        const isNetral = valLow === 'netral' || valLow === 'neutral';
+        badge.className = isPos ? 'badge-pos' : (isNetral ? 'badge-netral' : 'badge-neg');
+        badge.textContent = val;
+        td.appendChild(badge);
+      } else {
+        td.textContent = val;
+        td.title = val;
+      }
+      tr.appendChild(td);
+    });
+    tbody.appendChild(tr);
+  });
+
+  const hidden = total - preview.length;
+  document.getElementById('prevInfo').textContent = hidden > 0
+    ? `Menampilkan 10 dari ${total} baris — unduh CSV untuk melihat semua hasil.`
+    : `Semua ${total} baris ditampilkan.`;
+}
+
+async function uploadCSV() {
+  if (!selectedFile) { showToast('Pilih file CSV terlebih dahulu!', 'error'); return; }
+
+  const btn = document.getElementById('btnProses');
+  const progWrap    = document.getElementById('progWrap');
+  const progFill    = document.getElementById('progFill');
+  const progPercent = document.getElementById('progPercent');
+  const progLabel   = document.getElementById('progLabel');
+
+  btn.disabled = true; btn.textContent = 'Memproses Data...';
+  document.getElementById('csvResults').style.display = 'none';
+  progWrap.style.display = 'block';
+  progFill.style.width = '0%'; progPercent.textContent = '0%';
+  progLabel.textContent = 'Mengekstrak fitur teks...';
+
+  let progress = 0;
+  const interval = setInterval(() => {
+    if (progress < 90) {
+      progress += Math.floor(Math.random() * 8) + 2;
+      if (progress > 90) progress = 90;
+      progFill.style.width = progress + '%'; progPercent.textContent = progress + '%';
+      if (progress > 50) progLabel.textContent = 'Memprediksi dengan AI...';
+    }
+  }, 400);
+
+  const fd = new FormData(); fd.append('file', selectedFile);
+
+  try {
+    const res = await fetch('http://127.0.0.1:5000/predict_csv', { method:'POST', body:fd });
+    const data = await res.json();
+    if (data.error) throw new Error(data.error);
+
+    clearInterval(interval);
+    progFill.style.width = '100%'; progPercent.textContent = '100%';
+    progLabel.textContent = 'Menyusun hasil...';
+
+    setTimeout(async () => {
+      progWrap.style.display = 'none';
+
+      const total = data.total;
+      const pos = data.rekap_sentimen.Positif || 0;
+      const neg = data.rekap_sentimen.Negatif || 0;
+      const posPerc = total > 0 ? Math.round((pos / total) * 100) : 0;
+      const negPerc = total > 0 ? Math.round((neg / total) * 100) : 0;
+
+      document.getElementById('res-total').textContent = total;
+      document.getElementById('res-pos').textContent = posPerc + '%';
+      document.getElementById('res-neg').textContent = negPerc + '%';
+
+      if (chartInstance) chartInstance.destroy();
+      chartInstance = new Chart(document.getElementById('barChart'), {
+        type: 'bar',
+        data: {
+          labels: ['Positif', 'Negatif'],
+          datasets: [{ data:[posPerc,negPerc], backgroundColor:['#16a37a','#dc2626'], borderRadius:6 }]
+        },
+        options: {
+          plugins:{ legend:{ display:false } },
+          scales:{ y:{ beginAtZero:true, max:100, ticks:{ callback: v => v+'%' } } }
+        }
+      });
+
+      if (generatedCsvUrl) window.URL.revokeObjectURL(generatedCsvUrl);
+      if (data.csv_result) {
+        const finalCsvText = processCSVWithInsights(data.csv_result);
+        const blob = new Blob([data.csv_result], { type:'text/csv' });
+        generatedCsvUrl = window.URL.createObjectURL(blob);
+        document.getElementById('btnDownload').onclick = () => {
+          const a = document.createElement('a'); a.href = generatedCsvUrl;
+          a.download = 'Hasil_' + selectedFile.name; a.click();
+        };
+        renderResultPreview(finalCsvText);
+      }
+
+      /* Simpan ke Supabase */
+      const sentimenStr = `Positif: ${posPerc}% | Negatif: ${negPerc}%`;
+      const { error: dbErr } = await getSB().from('histories').insert([{
+        user_id: currentUser.id,
+        input_type: 'csv',
+        input_value: selectedFile.name,
+        sentimen: sentimenStr
+      }]);
+      if (dbErr) console.error('Gagal simpan history:', dbErr);
+
+      document.getElementById('csvResults').style.display = 'block';
+      showToast('Analisis selesai dan disimpan di Riwayat!', 'success');
+      btn.disabled = false; btn.textContent = 'Jalankan Prediksi Massal →';
+    }, 1000);
+
+  } catch (err) {
+    clearInterval(interval); progWrap.style.display = 'none';
+    showToast(err.message, 'error');
+    btn.disabled = false; btn.textContent = 'Jalankan Prediksi Massal →';
+  }
+}
+// --- FUNGSI EKSTRAKSI INSIGHT ---
+function generateInsight(teks, sentimen) {
+    if (!teks) return "-";
+    const teksLower = teks.toLowerCase();
+    if (sentimen === "Negatif") {
+        if (teksLower.match(/(lag|ping|server|patah|berat|fps|panas|bug|hp)/)) return "Kendala Teknis";
+        if (teksLower.match(/(gacha|pity|ampas|rate off|kalah|bintang 5|susah|mahal)/)) return "Sistem Gacha";
+        if (teksLower.match(/(bosen|membosankan|sepi|event|konten)/)) return "Konten Game";
+        return "Ketidakpuasan Umum";
+    } 
+    else if (sentimen === "Positif") {
+        if (teksLower.match(/(grafik|visual|pemandangan|animasi|mulus|desain)/)) return "Kualitas Visual";
+        if (teksLower.match(/(kuro|dev|hadiah|kompensasi|gratis|terima kasih)/)) return "Apresiasi Developer";
+        if (teksLower.match(/(story|cerita|karakter|gameplay|seru|bagus|keren|mekanik|combat)/)) return "Gameplay & Cerita";
+        return "Kepuasan Umum";
+    }
+    return "-";
+}
+
+function processCSVWithInsights(csvText) {
+    const lines = csvText.trim().split(/\r?\n/).filter(l => l.trim());
+    if (lines.length < 2) return csvText;
+    const sep = lines[0].includes(';') ? ';' : ',';
+
+    function parseCSVLine(text, separator) {
+        let result = [], col = '', inQuote = false;
+        for (let i = 0; i < text.length; i++) {
+            let c = text[i];
+            if (c === '"' && text[i + 1] === '"') { col += '"'; i++; }
+            else if (c === '"') { inQuote = !inQuote; }
+            else if (c === separator && !inQuote) { result.push(col); col = ''; }
+            else { col += c; }
+        }
+        result.push(col);
+        return result.map(s => s.replace(/^"|"$/g, '').trim());
+    }
+
+    // Ekstrak header dan tambahkan kolom Insight
+    let headers = parseCSVLine(lines[0], sep);
+    headers.push("Insight"); 
+    let newCsvText = headers.map(h => `"${h}"`).join(sep) + "\n";
+
+    // Cari posisi kolom ulasan dan sentimen
+    let textIdx = headers.findIndex(h => h.toLowerCase().includes('ulasan') || h.toLowerCase().includes('text') || h.toLowerCase().includes('content'));
+    if(textIdx === -1) textIdx = 0; 
+
+    const SENTIMEN_KEYWORDS = ['prediksi_sentimen', 'sentimen', 'label', 'prediksi'];
+    let sentimenIdx = headers.findIndex(h => {
+        const hl = h.toLowerCase().trim();
+        return SENTIMEN_KEYWORDS.some(k => hl === k || hl.endsWith('_' + k) || hl.startsWith(k + '_'));
+    });
+
+    // Proses setiap baris
+    for(let i = 1; i < lines.length; i++) {
+        let row = parseCSVLine(lines[i], sep);
+        let teks = row[textIdx] || "";
+        let sent = sentimenIdx !== -1 ? row[sentimenIdx] : "";
+        
+        // Standarisasi string sentimen
+        if(sent.toLowerCase() === 'positif' || sent.toLowerCase() === 'positive') sent = 'Positif';
+        if(sent.toLowerCase() === 'negatif' || sent.toLowerCase() === 'negative') sent = 'Negatif';
+
+        let insight = generateInsight(teks, sent);
+        row.push(insight);
+        newCsvText += row.map(c => `"${c}"`).join(sep) + "\n";
+    }
+    return newCsvText;
+}
+
+</script>
+</body>
+</html>
